@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Check, Circle, Star, Heart, Image as ImageIcon, X, Pencil } from "lucide-react";
+import { Check, Circle, Star, Heart, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { BingoTile as BingoTileType, MarkerType, Customization } from "@shared/schema";
 import {
@@ -8,7 +8,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 
 interface BingoTileProps {
   tile: BingoTileType;
@@ -29,9 +28,7 @@ export function BingoTile({ tile, customization, onUpdate, isExporting = false }
   const [editText, setEditText] = useState(tile.text);
   const [isHovered, setIsHovered] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const originalTextRef = useRef(tile.text);
-  const { toast } = useToast();
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -87,44 +84,6 @@ export function BingoTile({ tile, customization, onUpdate, isExporting = false }
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 2 * 1024 * 1024) {
-      toast({
-        title: "Image too large",
-        description: "Please choose an image smaller than 2MB.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      onUpdate({
-        ...tile,
-        backgroundImage: reader.result as string,
-      });
-      toast({
-        title: "Image added",
-        description: "Tile background image has been set.",
-      });
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleRemoveImage = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onUpdate({
-      ...tile,
-      backgroundImage: null,
-    });
-    toast({
-      title: "Image removed",
-      description: "Tile background image has been cleared.",
-    });
-  };
 
   const MarkerIcon = markerIcons[customization.markerType] || Check;
 
@@ -192,15 +151,6 @@ export function BingoTile({ tile, customization, onUpdate, isExporting = false }
         <div className={cn("absolute inset-0 bg-black/20", cornerClass)} />
       )}
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        onChange={handleImageUpload}
-        className="hidden"
-        data-testid={`input-tile-image-${tile.id}`}
-      />
-
       {isHovered && !isExporting && !isEditing && (
         <div 
           className="hover-overlay absolute top-0.5 right-0.5 z-30 flex gap-0.5"
@@ -216,29 +166,6 @@ export function BingoTile({ tile, customization, onUpdate, isExporting = false }
           >
             <Pencil className="w-2.5 h-2.5" />
           </Button>
-          <Button
-            variant="secondary"
-            size="icon"
-            className="h-5 w-5 min-h-0"
-            onClick={(e) => {
-              e.stopPropagation();
-              fileInputRef.current?.click();
-            }}
-            data-testid={`button-add-image-${tile.id}`}
-          >
-            <ImageIcon className="w-2.5 h-2.5" />
-          </Button>
-          {tile.backgroundImage && (
-            <Button
-              variant="destructive"
-              size="icon"
-              className="h-5 w-5 min-h-0"
-              onClick={handleRemoveImage}
-              data-testid={`button-remove-image-${tile.id}`}
-            >
-              <X className="w-2.5 h-2.5" />
-            </Button>
-          )}
         </div>
       )}
 

@@ -8,6 +8,15 @@ Goal Bingo Tracker is a personal productivity web application that allows users 
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (Dec 29, 2025)
+
+### Updated Features:
+- **Title Color Dark Mode**: Default title color changed to white (#ffffff) for better dark mode visibility
+- **Removed Image Icon from Tiles**: Removed the image upload button from tile hover state to reduce visual clutter
+- **Simplified Tile Interactions**: Tiles now only show edit button on hover (pencil icon)
+- **Monetization UI**: Added frontend design for pricing plans, ad placements, and revenue sharing features at `/monetization` route
+- **Image Management**: Images are managed through the customization panel instead of tile hover buttons
+
 ## System Architecture
 
 ### Frontend Architecture
@@ -15,7 +24,7 @@ Preferred communication style: Simple, everyday language.
 **Framework & Build System:**
 - React 18 with TypeScript for type-safe component development
 - Vite as the build tool and development server for fast HMR and optimized production builds
-- Wouter for lightweight client-side routing (Home page, View Card page, 404)
+- Wouter for lightweight client-side routing (Home page, View Card page, Monetization page, 404)
 
 **UI Component System:**
 - shadcn/ui component library built on Radix UI primitives
@@ -27,14 +36,16 @@ Preferred communication style: Simple, everyday language.
 **State Management:**
 - TanStack Query (React Query) for server state management and caching
 - Local React state for UI interactions and optimistic updates
+- Custom event system for tile image updates from customization panel
 - No global state management library - component-level state is sufficient for this application's scope
 
 **Key Features:**
 - **Bingo Grid Component**: 5x5 grid with editable tiles that support click-to-complete interactions
-- **Customization Panel**: Collapsible sections for colors, images, and marker selection
+- **Customization Panel**: Collapsible sections for colors, images, markers, typography, board layout, and deadline timer
 - **Image Upload**: Client-side image handling with FileReader API (2MB limit, converted to base64)
 - **Export Functionality**: Uses html-to-image library to convert grid to downloadable PNG
 - **Theme Toggle**: Light/dark mode with localStorage persistence
+- **Monetization UI**: Frontend design for subscription tiers (Free, Pro, Business) with feature comparison and ad placement options
 
 ### Backend Architecture
 
@@ -85,6 +96,7 @@ Preferred communication style: Simple, everyday language.
 - text (string)
 - completed (boolean)
 - completedAt (ISO timestamp or null)
+- backgroundImage (base64 data URL or null - set via customization events)
 
 **Customization:**
 - boardBackgroundColor (hex color)
@@ -98,7 +110,15 @@ Preferred communication style: Simple, everyday language.
 - markerSize (percentage 50-150, default 50% = original 24/32px icons)
 - markerImage (base64 data URL for custom marker - only for circle/star/heart, not checkmark)
 - deadline (ISO timestamp for board deadline)
-- titleColor (hex color, defaults to dark for light mode visibility)
+- titleColor (hex color, defaults to white for dark mode visibility)
+- goalColor (hex color for goal text)
+- goalFont (font family for goal text)
+- titleAlignment (left, center, right)
+- titleFont (font family for title)
+- rows (number 2-10, default 5)
+- columns (number 2-10, default 5)
+- tileSpacing (0-20px, default 8px)
+- tileCorners (square or rounded)
 
 ### External Dependencies
 
@@ -128,3 +148,19 @@ Preferred communication style: Simple, everyday language.
 - No external hosting dependencies specified
 - Sessions would use `connect-pg-simple` with PostgreSQL (configured but not implemented)
 - No authentication system currently implemented despite passport dependencies being present
+
+## Deployment Status
+
+The app is configured to run on port 5000 via npm run dev. To deploy to production, use the Replit publish feature. The app includes:
+- Frontend routing via Wouter
+- API endpoint structure ready for backend implementation
+- Monetization UI frontend (backend payment processing not yet implemented)
+
+## Next Steps
+
+- Implement backend payment processing for monetization tiers
+- Add database integration for persistent storage
+- Implement team collaboration features for Business tier
+- Add analytics dashboard
+- Implement API access for Business tier users
+- Add email notifications for deadline timers

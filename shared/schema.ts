@@ -87,7 +87,7 @@ export const defaultCustomization: Customization = {
   tileSpacing: 8,
   titleAlignment: "center",
   titleFont: "Inter",
-  titleColor: "#1f2937",
+  titleColor: "#ffffff",
   goalFont: "Inter",
   goalColor: "#1f2937",
   deadline: null,

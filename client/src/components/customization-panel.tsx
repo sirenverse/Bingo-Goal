@@ -378,7 +378,7 @@ export function CustomizationPanel({ customization, onChange, onGridSizeChange }
             testId="upload-board-bg"
           />
           <div className="text-xs text-muted-foreground p-2 bg-muted/50 rounded-md">
-            Hover over any tile to add individual background images.
+            Tile images can be managed through individual tile settings in the customize panel.
           </div>
         </CollapsibleContent>
       </Collapsible>

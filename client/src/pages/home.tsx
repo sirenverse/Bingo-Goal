@@ -204,10 +204,26 @@ export default function Home() {
   const completedCount = tiles.filter((t) => t.completed).length;
   const goalCount = tiles.filter((t) => t.text.trim()).length;
 
+  useEffect(() => {
+    const handleTileImageUpdate = (event: Event) => {
+      const customEvent = event as CustomEvent<{ tileId: number; image: string | null }>;
+      const { tileId, image } = customEvent.detail;
+      setTiles((prev) =>
+        prev.map((tile) =>
+          tile.id === tileId ? { ...tile, backgroundImage: image } : tile
+        )
+      );
+    };
+
+    window.addEventListener("tileImageUpdate", handleTileImageUpdate);
+    return () =>
+      window.removeEventListener("tileImageUpdate", handleTileImageUpdate);
+  }, []);
+
   const titleStyle: React.CSSProperties = {
     textAlign: customization.titleAlignment || "center",
     fontFamily: customization.titleFont || "Inter",
-    color: customization.titleColor || "#1f2937",
+    color: customization.titleColor || "#ffffff",
   };
 
   return (
