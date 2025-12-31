@@ -377,8 +377,71 @@ export function CustomizationPanel({ customization, onChange, onGridSizeChange }
             onChange={(url) => updateField("boardBackgroundImage", url)}
             testId="upload-board-bg"
           />
-          <div className="text-xs text-muted-foreground p-2 bg-muted/50 rounded-md">
-            Tile images can be managed through individual tile settings in the customize panel.
+          <div className="space-y-2 pt-2">
+            <Label className="text-xs font-semibold">Individual Tile Images</Label>
+            <div className="space-y-2 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+              {tiles && tiles.length > 0 ? (
+                tiles.map((tile: BingoTile) => (
+                  <div key={tile.id} className="flex items-center justify-between gap-3 p-2 bg-muted/30 rounded-lg border border-border/50">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium truncate">
+                        {tile.text || `Tile ${tile.id + 1}`}
+                      </p>
+                      {tile.backgroundImage && (
+                        <div className="mt-1 w-8 h-8 rounded border overflow-hidden">
+                          <img src={tile.backgroundImage} alt="preview" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 px-2 text-[10px]"
+                        onClick={() => {
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.accept = 'image/*';
+                          input.onchange = (e) => {
+                            const file = (e.target as HTMLInputElement).files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = (re) => {
+                                const event = new CustomEvent('tileImageUpdate', {
+                                  detail: { tileId: tile.id, image: re.target?.result }
+                                });
+                                window.dispatchEvent(event);
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          };
+                          input.click();
+                        }}
+                      >
+                        {tile.backgroundImage ? 'Change' : 'Add'}
+                      </Button>
+                      {tile.backgroundImage && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => {
+                            const event = new CustomEvent('tileImageUpdate', {
+                              detail: { tileId: tile.id, image: null }
+                            });
+                            window.dispatchEvent(event);
+                          }}
+                        >
+                          <X className="w-3 h-3" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-xs text-muted-foreground py-2 text-center">No tiles available</p>
+              )}
+            </div>
           </div>
         </CollapsibleContent>
       </Collapsible>
