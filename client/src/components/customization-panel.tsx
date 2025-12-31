@@ -38,7 +38,7 @@ interface CustomizationPanelProps {
   tiles?: BingoTile[];
 }
 
-export function CustomizationPanel({ customization, onChange, onGridSizeChange }: CustomizationPanelProps) {
+export function CustomizationPanel({ customization, onChange, onGridSizeChange, tiles }: CustomizationPanelProps) {
   const [openSections, setOpenSections] = useState({
     board: true,
     colors: false,
