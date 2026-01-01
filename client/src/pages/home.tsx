@@ -217,12 +217,30 @@ export default function Home() {
   };
 
   const handleWatchAd = () => {
-    setAdDialogOpen(false);
-    toast({
-      title: "Ad Completed!",
-      description: "Premium feature unlocked for 1 hour.",
-    });
-    // In a real app, this would set a temporary server-side flag
+    if (typeof window !== 'undefined' && (window as any).adsbygoogle) {
+      try {
+        ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+        setAdDialogOpen(false);
+        toast({
+          title: "Ad Completed!",
+          description: "Premium feature unlocked for 1 hour.",
+        });
+      } catch (e) {
+        console.error("AdSense error:", e);
+        toast({
+          title: "Ad Error",
+          description: "Could not load ad. Please try again later.",
+          variant: "destructive",
+        });
+      }
+    } else {
+      setAdDialogOpen(false);
+      toast({
+        title: "Setup Required",
+        description: "AdSense code not found in <head>. Please check your integration.",
+        variant: "destructive",
+      });
+    }
   };
 
   const completedCount = tiles.filter((t) => t.completed).length;

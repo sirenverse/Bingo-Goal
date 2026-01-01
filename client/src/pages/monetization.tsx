@@ -195,7 +195,19 @@ export default function Monetization() {
                   <Button 
                     variant="secondary" 
                     className="w-full justify-between group"
-                    onClick={() => alert("Showing ad... Reward will be active for " + reward.duration)}
+                    onClick={() => {
+                      if (typeof window !== 'undefined' && (window as any).adsbygoogle) {
+                        try {
+                          ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+                          alert("Showing ad... Reward will be active for " + reward.duration);
+                        } catch (e) {
+                          console.error("AdSense error:", e);
+                          alert("Ad could not be loaded. Please check your AdSense setup.");
+                        }
+                      } else {
+                        alert("AdSense is not yet loaded. Make sure you added the code to your <head> tags.");
+                      }
+                    }}
                   >
                     <span>{reward.action}</span>
                     <Sparkles className="w-4 h-4 text-primary group-hover:animate-pulse" />
