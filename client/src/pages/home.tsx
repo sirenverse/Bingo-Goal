@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Share2, RotateCcw, Save, Loader2, Settings2, Plus, ChevronDown, Clock, Trash2 } from "lucide-react";
+import { Share2, RotateCcw, Save, Loader2, Settings2, Plus, ChevronDown, Clock, Trash2, ShoppingBag, Sparkles, MonitorOff } from "lucide-react";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -43,6 +44,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 function DeadlineTimer({ deadline }: { deadline: string }) {
   const [timeLeft, setTimeLeft] = useState("");
@@ -92,6 +101,8 @@ export default function Home() {
   const [customization, setCustomization] = useState<Customization>(defaultCustomization);
   const [cardId, setCardId] = useState<string | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
+  const [adDialogOpen, setAdDialogOpen] = useState(false);
+  const [isPro, setIsPro] = useState(false); // Frontend state for demo
   const gridRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -148,6 +159,10 @@ export default function Home() {
   }, []);
 
   const handleGridSizeChange = useCallback((rows: number, columns: number) => {
+    if (!isPro && (rows !== 5 || columns !== 5)) {
+      setAdDialogOpen(true);
+      return;
+    }
     const newTileCount = rows * columns;
     setTiles((prev) => {
       if (prev.length === newTileCount) return prev;
@@ -168,7 +183,7 @@ export default function Home() {
       }
       return newTiles;
     });
-  }, []);
+  }, [isPro]);
 
   const handleReset = () => {
     const rows = customization.rows || 5;
@@ -201,11 +216,24 @@ export default function Home() {
     await saveMutation.mutateAsync();
   };
 
+  const handleWatchAd = () => {
+    setAdDialogOpen(false);
+    toast({
+      title: "Ad Completed!",
+      description: "Premium feature unlocked for 1 hour.",
+    });
+    // In a real app, this would set a temporary server-side flag
+  };
+
   const completedCount = tiles.filter((t) => t.completed).length;
   const goalCount = tiles.filter((t) => t.text.trim()).length;
 
   useEffect(() => {
     const handleTileImageUpdate = (event: Event) => {
+      if (!isPro) {
+        setAdDialogOpen(true);
+        return;
+      }
       const customEvent = event as CustomEvent<{ tileId: number; image: string | null }>;
       const { tileId, image } = customEvent.detail;
       setTiles((prev) =>
@@ -218,7 +246,7 @@ export default function Home() {
     window.addEventListener("tileImageUpdate", handleTileImageUpdate);
     return () =>
       window.removeEventListener("tileImageUpdate", handleTileImageUpdate);
-  }, []);
+  }, [isPro]);
 
   const titleStyle: React.CSSProperties = {
     textAlign: customization.titleAlignment || "center",
@@ -244,6 +272,13 @@ export default function Home() {
             )}
           </div>
           <div className="flex items-center gap-1 flex-wrap">
+            <Link href="/monetization">
+              <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10">
+                <ShoppingBag className="w-4 h-4 mr-1" />
+                <span className="hidden md:inline">Shop</span>
+              </Button>
+            </Link>
+            
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" size="sm" data-testid="button-customize">
@@ -258,7 +293,13 @@ export default function Home() {
                 <div className="mt-4 overflow-y-auto max-h-[calc(100vh-100px)]">
                   <CustomizationPanel
                     customization={customization}
-                    onChange={setCustomization}
+                    onChange={(c) => {
+                      if (!isPro && (c.tileGlassEffect || c.boardBackgroundImage || (c.markerType && c.markerType !== 'circle'))) {
+                        setAdDialogOpen(true);
+                        return;
+                      }
+                      setCustomization(c);
+                    }}
                     onGridSizeChange={handleGridSizeChange}
                     tiles={tiles}
                   />
@@ -383,10 +424,6 @@ export default function Home() {
               onTileUpdate={handleTileUpdate}
             />
           </Card>
-
-          <p className="mt-2 text-center text-xs text-muted-foreground" data-testid="text-instructions">
-            Hover over a tile to edit or add an image. Click to mark complete.
-          </p>
         </div>
       </main>
 
@@ -398,6 +435,38 @@ export default function Home() {
         isSaving={saveMutation.isPending}
         onSaveFirst={handleSaveFirst}
       />
+
+      <Dialog open={adDialogOpen} onOpenChange={setAdDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-primary" />
+              Unlock Premium Feature
+            </DialogTitle>
+            <DialogDescription>
+              This is a Pro feature. Watch a short ad to unlock it for 1 hour, or upgrade to Pro for permanent access.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4 py-4">
+            <div className="aspect-video bg-muted rounded-lg flex items-center justify-center border-2 border-dashed border-muted-foreground/25">
+              <div className="text-center">
+                <MonitorOff className="w-8 h-8 mx-auto text-muted-foreground/50 mb-2" />
+                <p className="text-sm text-muted-foreground">Ad Placeholder</p>
+              </div>
+            </div>
+          </div>
+          <DialogFooter className="sm:justify-start gap-2">
+            <Button type="button" variant="default" className="flex-1" onClick={handleWatchAd}>
+              Watch Ad (30s)
+            </Button>
+            <Link href="/monetization" className="flex-1">
+              <Button type="button" variant="outline" className="w-full">
+                Upgrade to Pro
+              </Button>
+            </Link>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

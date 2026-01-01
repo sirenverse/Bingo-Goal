@@ -9,12 +9,14 @@ import {
   Check, 
   TrendingUp, 
   Share2, 
-  Loader2 
+  Loader2,
+  Image as ImageIcon,
+  MousePointer2,
+  MonitorOff
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Monetization() {
-  const [selectedPlan, setSelectedPlan] = useState<"free" | "pro" | "business">("free");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleUpgrade = (plan: string) => {
@@ -30,315 +32,184 @@ export default function Monetization() {
       id: "free",
       name: "Free",
       price: 0,
-      description: "Get started with bingo tracking",
+      description: "Basic goal tracking for everyone",
       features: [
-        "Create unlimited bingo cards",
-        "5x5 grid only",
+        "Create 1 board",
+        "Track goals",
         "Basic customization",
-        "Ad-supported",
-        "Share public links",
+        "Ad-supported experience",
       ],
-      cta: "Start Free",
+      cta: "Current Plan",
       icon: Zap,
+      disabled: true,
     },
     {
       id: "pro",
       name: "Pro",
       price: 4.99,
       period: "/month",
-      description: "For serious goal trackers",
+      description: "For serious goal achievers",
       features: [
-        "Everything in Free",
-        "3x3 to 8x8 grid sizes",
-        "Advanced customization",
+        "Unlimited boards",
+        "Glass tiles effect",
+        "Image backgrounds & tiles",
+        "Marker customization",
         "Ad-free experience",
-        "Custom themes",
-        "Deadline timers",
-        "Export as image",
-        "Analytics dashboard",
+        "Export board as image",
       ],
       cta: "Upgrade to Pro",
       icon: Crown,
       popular: true,
     },
-    {
-      id: "business",
-      name: "Business",
-      price: 19.99,
-      period: "/month",
-      description: "For teams and organizations",
-      features: [
-        "Everything in Pro",
-        "Team collaboration (5 users)",
-        "Unlimited custom grids",
-        "Premium templates",
-        "Advanced analytics",
-        "API access",
-        "Priority support",
-        "Custom branding",
-      ],
-      cta: "Contact Sales",
-      icon: Sparkles,
-    },
   ];
 
-  const adOptions = [
+  const adRewards = [
     {
-      title: "Banner Ads (Top)",
-      placement: "top",
-      size: "728x90",
-      revenue: "Low CPM",
+      title: "Unlock Premium Theme",
+      description: "Get access to all glass effects and premium colors",
+      duration: "1h",
+      icon: Sparkles,
+      action: "Watch ad → unlock",
     },
     {
-      title: "Sidebar Ads",
-      placement: "sidebar",
-      size: "300x600",
-      revenue: "Medium CPM",
+      title: "Remove Ads",
+      description: "Browse and edit without any interruptions",
+      duration: "1h",
+      icon: MonitorOff,
+      action: "Watch ad → remove",
     },
     {
-      title: "Native Ads",
-      placement: "inline",
-      size: "Native",
-      revenue: "High CPM",
+      title: "One-time Export",
+      description: "Export your current board as a high-quality image",
+      duration: "Once",
+      icon: Share2,
+      action: "Watch ad → export",
     },
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-2 py-2 flex items-center justify-between gap-2">
-          <h1 className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-chart-2 bg-clip-text text-transparent">
-            Goal Bingo - Monetization
-          </h1>
-          <ThemeToggle />
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-primary" />
+            <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-chart-2 bg-clip-text text-transparent">
+              Goal Bingo Shop
+            </h1>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={() => window.history.back()}>Back to Board</Button>
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-2 py-8">
+      <main className="container mx-auto px-4 py-8 max-w-5xl">
         {/* Pricing Section */}
-        <section className="mb-16">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-3">Upgrade Your Experience</h2>
+          <p className="text-muted-foreground">Unlock the full potential of your goal tracking</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
+          {plans.map((plan) => {
+            const Icon = plan.icon;
+            return (
+              <Card
+                key={plan.id}
+                className={`p-8 relative flex flex-col transition-all hover:shadow-lg ${
+                  plan.popular ? "ring-2 ring-primary border-primary/50" : ""
+                }`}
+              >
+                {plan.popular && (
+                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
+                    MOST POPULAR
+                  </Badge>
+                )}
+
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <Icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold">{plan.name}</h3>
+                    <p className="text-sm text-muted-foreground">{plan.description}</p>
+                  </div>
+                </div>
+
+                <div className="mb-8">
+                  <span className="text-4xl font-bold">${plan.price}</span>
+                  {plan.period && (
+                    <span className="text-muted-foreground ml-1">{plan.period}</span>
+                  )}
+                </div>
+
+                <div className="space-y-4 flex-1 mb-8">
+                  {plan.features.map((feature) => (
+                    <div key={feature} className="flex items-center gap-3">
+                      <div className="bg-primary/20 p-0.5 rounded-full">
+                        <Check className="w-4 h-4 text-primary" />
+                      </div>
+                      <span className="text-sm">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <Button
+                  className="w-full h-12 text-lg font-semibold"
+                  variant={plan.popular ? "default" : "outline"}
+                  disabled={plan.disabled || isLoading}
+                  onClick={() => handleUpgrade(plan.name)}
+                >
+                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : plan.cta}
+                </Button>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Ad Rewards Section */}
+        <div className="border-t pt-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">
-              Choose Your Plan
-            </h2>
-            <p className="text-muted-foreground text-lg">
-              Unlock premium features and remove ads
-            </p>
+            <h2 className="text-3xl font-bold mb-3">Support the App</h2>
+            <p className="text-muted-foreground">Watch a short ad to unlock premium perks for a limited time</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {plans.map((plan) => {
-              const Icon = plan.icon;
+            {adRewards.map((reward) => {
+              const Icon = reward.icon;
               return (
-                <Card
-                  key={plan.id}
-                  className={`p-6 relative flex flex-col transition-all ${
-                    plan.popular
-                      ? "ring-2 ring-primary md:scale-105"
-                      : ""
-                  }`}
-                >
-                  {plan.popular && (
-                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      Most Popular
-                    </Badge>
-                  )}
-
-                  <div className="flex items-center gap-2 mb-3">
-                    <Icon className="w-5 h-5 text-primary" />
-                    <h3 className="text-xl font-bold">{plan.name}</h3>
+                <Card key={reward.title} className="p-6 hover:border-primary/50 transition-colors">
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="p-3 bg-muted rounded-xl">
+                      <Icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold">{reward.title}</h4>
+                      <Badge variant="secondary" className="mt-1">{reward.duration}</Badge>
+                    </div>
                   </div>
-
-                  <p className="text-muted-foreground text-sm mb-4">
-                    {plan.description}
+                  <p className="text-sm text-muted-foreground mb-6">
+                    {reward.description}
                   </p>
-
-                  <div className="mb-6">
-                    <span className="text-3xl font-bold">
-                      ${plan.price}
-                    </span>
-                    {plan.period && (
-                      <span className="text-muted-foreground text-sm">
-                        {plan.period}
-                      </span>
-                    )}
-                  </div>
-
-                  <Button
-                    className="w-full mb-6"
-                    variant={
-                      selectedPlan === plan.id ? "default" : "outline"
-                    }
-                    onClick={() => {
-                      if (plan.id !== "free") {
-                        handleUpgrade(plan.name);
-                      }
-                    }}
-                    disabled={isLoading && selectedPlan === plan.id}
+                  <Button 
+                    variant="secondary" 
+                    className="w-full justify-between group"
+                    onClick={() => alert("Showing ad... Reward will be active for " + reward.duration)}
                   >
-                    {isLoading && selectedPlan === plan.id ? (
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    ) : null}
-                    {plan.cta}
+                    <span>{reward.action}</span>
+                    <Sparkles className="w-4 h-4 text-primary group-hover:animate-pulse" />
                   </Button>
-
-                  <div className="space-y-3 flex-1">
-                    {plan.features.map((feature) => (
-                      <div
-                        key={feature}
-                        className="flex items-center gap-2 text-sm"
-                      >
-                        <Check className="w-4 h-4 text-primary shrink-0" />
-                        <span>{feature}</span>
-                      </div>
-                    ))}
-                  </div>
                 </Card>
               );
             })}
           </div>
-        </section>
-
-        {/* Ad Network Section */}
-        <section className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">
-              Ad Placements
-            </h2>
-            <p className="text-muted-foreground text-lg">
-              Free users see targeted ads - choose your preferred placement
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {adOptions.map((ad) => (
-              <Card key={ad.placement} className="p-6 hover:shadow-lg transition-shadow">
-                <div className="aspect-video bg-muted rounded-lg mb-4 flex items-center justify-center">
-                  <div className="text-center text-muted-foreground">
-                    <p className="font-semibold">{ad.size}</p>
-                    <p className="text-xs">Ad Preview</p>
-                  </div>
-                </div>
-                <h3 className="font-semibold mb-2">{ad.title}</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Placement: {ad.placement}
-                </p>
-                <Badge variant="secondary">{ad.revenue}</Badge>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* Revenue Sharing Section */}
-        <section className="mb-16">
-          <Card className="p-8 bg-gradient-to-br from-primary/10 to-chart-2/10 border-primary/20">
-            <div className="flex items-start gap-4">
-              <TrendingUp className="w-8 h-8 text-primary shrink-0 mt-1" />
-              <div>
-                <h3 className="text-2xl font-bold mb-2">Revenue Sharing</h3>
-                <p className="text-muted-foreground mb-4">
-                  Help other users discover Goal Bingo and earn rewards
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Referral Commission</p>
-                    <p className="text-2xl font-bold">30%</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Ad Revenue Share</p>
-                    <p className="text-2xl font-bold">50%</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Monthly Bonus</p>
-                    <p className="text-2xl font-bold">$100+</p>
-                  </div>
-                </div>
-                <Button>
-                  <Share2 className="w-4 h-4 mr-2" />
-                  Start Earning
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </section>
-
-        {/* Features Comparison */}
-        <section>
-          <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
-            Features Comparison
-          </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left py-3 px-4 font-semibold">Feature</th>
-                  <th className="text-center py-3 px-4 font-semibold">Free</th>
-                  <th className="text-center py-3 px-4 font-semibold">Pro</th>
-                  <th className="text-center py-3 px-4 font-semibold">Business</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b">
-                  <td className="py-3 px-4">Unlimited Cards</td>
-                  <td className="text-center">
-                    <Check className="w-4 h-4 text-green-600 mx-auto" />
-                  </td>
-                  <td className="text-center">
-                    <Check className="w-4 h-4 text-green-600 mx-auto" />
-                  </td>
-                  <td className="text-center">
-                    <Check className="w-4 h-4 text-green-600 mx-auto" />
-                  </td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-3 px-4">Grid Customization</td>
-                  <td className="text-center text-muted-foreground">5x5 Only</td>
-                  <td className="text-center">
-                    <Check className="w-4 h-4 text-green-600 mx-auto" />
-                  </td>
-                  <td className="text-center">
-                    <Check className="w-4 h-4 text-green-600 mx-auto" />
-                  </td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-3 px-4">Ad-Free</td>
-                  <td className="text-center text-muted-foreground">No</td>
-                  <td className="text-center">
-                    <Check className="w-4 h-4 text-green-600 mx-auto" />
-                  </td>
-                  <td className="text-center">
-                    <Check className="w-4 h-4 text-green-600 mx-auto" />
-                  </td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-3 px-4">Team Collaboration</td>
-                  <td className="text-center text-muted-foreground">No</td>
-                  <td className="text-center text-muted-foreground">No</td>
-                  <td className="text-center">
-                    <Check className="w-4 h-4 text-green-600 mx-auto" />
-                  </td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-3 px-4">API Access</td>
-                  <td className="text-center text-muted-foreground">No</td>
-                  <td className="text-center text-muted-foreground">No</td>
-                  <td className="text-center">
-                    <Check className="w-4 h-4 text-green-600 mx-auto" />
-                  </td>
-                </tr>
-                <tr>
-                  <td className="py-3 px-4">Priority Support</td>
-                  <td className="text-center text-muted-foreground">No</td>
-                  <td className="text-center text-muted-foreground">No</td>
-                  <td className="text-center">
-                    <Check className="w-4 h-4 text-green-600 mx-auto" />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
+        </div>
       </main>
+
+      <footer className="py-12 text-center text-muted-foreground border-t mt-16">
+        <p className="text-sm">Thank you for supporting Goal Bingo!</p>
+      </footer>
     </div>
   );
 }
