@@ -260,7 +260,7 @@ export default function Home() {
         <div className="container mx-auto px-2 py-2 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-chart-2 bg-clip-text text-transparent" data-testid="text-logo">
-              Goal Bingo
+              Bingo Goal
             </h1>
             {goalCount > 0 && (
               <span className="text-xs text-muted-foreground" data-testid="text-progress">
