@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Share2, RotateCcw, Save, Loader2, Settings2, Plus, ChevronDown, Clock, Trash2, ShoppingBag, Sparkles, MonitorOff, TrendingUp } from "lucide-react";
 import { Link } from "wouter";
-import logoImage from "@assets/generated_images/modern_bingo_game_logo_icon.png";
+import logoImage from "@assets/bingo_goal_1767994612424.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
