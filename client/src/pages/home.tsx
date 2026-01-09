@@ -96,7 +96,7 @@ function DeadlineTimer({ deadline }: { deadline: string }) {
 }
 
 export default function Home() {
-  const [title, setTitle] = useState("My Goal Bingo");
+  const [title, setTitle] = useState("My Bingo Goal");
   const [tiles, setTiles] = useState<BingoTile[]>(createEmptyTiles());
   const [customization, setCustomization] = useState<Customization>(defaultCustomization);
   const [cardId, setCardId] = useState<string | null>(null);
@@ -188,7 +188,7 @@ export default function Home() {
   const handleReset = () => {
     const rows = customization.rows || 5;
     const columns = customization.columns || 5;
-    setTitle("My Goal Bingo");
+    setTitle("My Bingo Goal");
     setTiles(createEmptyTiles(rows, columns));
     setCustomization(defaultCustomization);
     setCardId(null);
@@ -199,7 +199,7 @@ export default function Home() {
   };
 
   const handleNewBoard = () => {
-    setTitle("My Goal Bingo");
+    setTitle("My Bingo Goal");
     setTiles(createEmptyTiles(5, 5));
     setCustomization(defaultCustomization);
     setCardId(null);
@@ -485,6 +485,18 @@ export default function Home() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <footer className="py-6 border-t mt-auto">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Bingo Goal. All rights reserved.
+          </p>
+          <div className="mt-2 flex justify-center gap-4 text-xs text-muted-foreground">
+            <a href="#" className="hover:text-primary underline">Privacy Policy</a>
+            <a href="#" className="hover:text-primary underline">Terms of Service</a>
+            <a href="#" className="hover:text-primary underline">Cookie Policy</a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
