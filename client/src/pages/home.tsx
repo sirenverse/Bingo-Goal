@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Share2, RotateCcw, Save, Loader2, Settings2, Plus, ChevronDown, Clock, Trash2, ShoppingBag, Sparkles, MonitorOff, TrendingUp } from "lucide-react";
 import { Link } from "wouter";
-import logoImage from "@assets/generated_images/wide_horizontal_bingo_goal_logo.png";
+import logoImage from "@assets/generated_images/modern_bingo_game_logo_icon.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -279,7 +279,10 @@ export default function Home() {
         <div className="container mx-auto px-2 py-2 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 flex-wrap">
             <div className="flex items-center gap-2">
-              <img src={logoImage} alt="Bingo Goal Logo" className="h-8 object-contain" />
+              <img src={logoImage} alt="Bingo Goal Logo" className="w-8 h-8 rounded-lg object-contain" />
+              <h1 className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-chart-2 bg-clip-text text-transparent" data-testid="text-logo">
+                Bingo Goal
+              </h1>
             </div>
             {goalCount > 0 && (
               <span className="text-xs text-muted-foreground" data-testid="text-progress">
